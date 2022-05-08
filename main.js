@@ -1,41 +1,36 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
+const { Client } = require('pg');
+
+const client = new Client({
+    user : 'postgres',
+    host : 'localhost',
+    database : 'postgres',
+    password : '0119',
+    port : 5432,
+});
+
+client.connect();
+
+client.query('SELECT NOW()', (err, res) => {
+    console.log(err, res)
+    client.end()
+});
 
 var app = http.createServer(function(request,response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
-    var title = queryData.id;
-    if(_url == '/'){
-      title = 'Welcome';
+    var pathname = url.parse(_url, true).pathname;
+    if(pathname === '/'){
+      if(queryData.id === undefined){
+        fs.readdir('./data', function(error, filelist){
+        client.query(`SELECT * FROM driver`, function(error,drivers){
+          console.log(drivers);
+          response.writeHead(200);
+          response.end('Success');
+        });
+      });
     }
-    if(_url == '/favicon.ico'){
-      return response.writeHead(404);
-    }
-    response.writeHead(200);
-    fs.readFile(`test/${queryData.id}`, 'utf8', function(err, description){
-      var template = `
-      <!doctype html>
-      <html>
-      <head>
-        <title>WEB1 - ${title}</title>
-        <meta charset="utf-8">
-      </head>
-      <body>
-        <h1><a href="/">WEB</a></h1>
-        <ul>
-          <li><a href="/?id=HTML">HTML</a></li>
-          <li><a href="/?id=CSS">CSS</a></li>
-          <li><a href="/?id=JavaScript">JavaScript</a></li>
-        </ul>
-        <h2>${title}</h2>
-        <p>${description}</p>
-      </body>
-      </html>
-      `;
-      response.end(template);
-    })
-
-
-});
+}});
 app.listen(3000);
