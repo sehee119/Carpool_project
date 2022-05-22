@@ -13,9 +13,10 @@ async function getGeo(name) {
         headers: { Accept: 'application/json', 'X-NCP-APIGW-API-KEY-ID' : api_key_id, 'X-NCP-APIGW-API-KEY' : api_key }
     }
     let res = await axios(options);
+    let address = res.data.addresses[0];
     console.log('쿼리 주소: ' + name);//
-
-    return res.data;
+    
+    return address.x + ',' + address.y;
 }
 
 exports.getGeo = getGeo;
