@@ -40,6 +40,7 @@ async function main() {
       password: 'postgres',
       port: 5432,
     });
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
     let row;
     db_client.connect();
     db_client.query(QUERY_CARPOOL_LIST, (error, results) => {
