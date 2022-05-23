@@ -44,7 +44,7 @@ async function main() {
     db_client.connect();
     db_client.query(QUERY_CARPOOL_LIST, (error, results) => {
       row = (error ? error.stack : results.rows) // 카풀 목록 Object
-      res.json(row)
+      res.json({ data : row })
       db_client.end()
     });
   });
