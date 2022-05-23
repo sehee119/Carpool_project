@@ -30,16 +30,16 @@ const options = {
 //   password: 'tls888',
 //   port: 5432,
 // });
-const db_client = new Client({ // AWS 서버
-  user: 'postgres',
-  host: 'localhost',
-  database: 'carpool',
-  password: 'postgres',
-  port: 5432,
-});
 
 async function main() {
   app.get('/list', (req, res) => { // 카풀 목록 불러오기
+    const db_client = new Client({ // AWS 서버
+      user: 'postgres',
+      host: 'localhost',
+      database: 'carpool',
+      password: 'postgres',
+      port: 5432,
+    });
     let row;
     db_client.connect();
     db_client.query(QUERY_CARPOOL_LIST, (error, results) => {
@@ -49,6 +49,13 @@ async function main() {
     });
   });
   app.get('/filter', async (req, res) => { // 카풀 검색(필터)하기
+    const db_client = new Client({ // AWS 서버
+      user: 'postgres',
+      host: 'localhost',
+      database: 'carpool',
+      password: 'postgres',
+      port: 5432,
+    });
     let start_date = req.query.start_date;
     let end_date = req.query.end_date;
     let dotw = req.query.dotw;
