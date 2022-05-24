@@ -12,10 +12,15 @@ async function getGeo(name) {
         // params: { query: encodeURIComponent(name) },
         headers: { Accept: 'application/json', 'X-NCP-APIGW-API-KEY-ID' : api_key_id, 'X-NCP-APIGW-API-KEY' : api_key }
     }
-    let res = await axios(options);
+    let res;
+    try {
+        res = await axios(options);
+    } catch(err) {
+        console.error('Geo 정보를 불러오지 못했습니다.');
+    }
     let address = res.data.addresses[0];
     console.log('쿼리 주소: ' + name);//
-    
+
     return address.x + ',' + address.y;
 }
 
