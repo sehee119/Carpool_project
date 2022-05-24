@@ -23,13 +23,13 @@ const options = {
   url: 'https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving',
   headers: { Accept: 'application/json', 'X-NCP-APIGW-API-KEY-ID' : api_key_id, 'X-NCP-APIGW-API-KEY' : api_key }
 }
-const db_client = new Client({ // 로컬
-  user: 'sdjin',
-  host: 'localhost',
-  database: 'sdjin',
-  password: 'tls888',
-  port: 5432,
-});
+// const db_client = new Client({ // 로컬
+//   user: 'sdjin',
+//   host: 'localhost',
+//   database: 'sdjin',
+//   password: 'tls888',
+//   port: 5432,
+// });
 
 async function main() {
   app.get('/list', (req, res) => { // 카풀 목록 불러오기
@@ -50,13 +50,15 @@ async function main() {
     });
   });
   app.get('/filter', async (req, res) => { // 카풀 검색(필터)하기
-    // const db_client = new Client({
-    //   user: 'postgres',
-    //   host: 'localhost',
-    //   database: 'carpool',
-    //   password: 'postgres',
-    //   port: 5432,
-    // });
+    const db_client = new Client({
+      user: 'postgres',
+      host: 'localhost',
+      database: 'carpool',
+      password: 'postgres',
+      port: 5432,
+    });
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
+
     let start_name = req.query.start_name;
     let goal_name = req.query.goal_name;
     // let gender = req.query.gender;
