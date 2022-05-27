@@ -1,3 +1,4 @@
 ./backend/.DS_Store
 ./backend/test.js
+./backend/test*.js
 
