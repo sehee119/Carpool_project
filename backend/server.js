@@ -27,20 +27,20 @@ const options = {
 
 async function main() {
   app.get('/list', (req, res) => { // 카풀 목록 불러오기
-    // const db_client = new Client({ // 로컬
-    //   user: 'sdjin',
-    //   host: 'localhost',
-    //   database: 'sdjin',
-    //   password: 'tls888',
-    //   port: 5432,
-    // });
-    const db_client = new Client({
-      user: 'postgres',
+    const db_client = new Client({ // 로컬
+      user: 'sdjin',
       host: 'localhost',
-      database: 'carpool',
-      password: 'postgres',
+      database: 'sdjin',
+      password: 'tls888',
       port: 5432,
     });
+    // const db_client = new Client({
+    //   user: 'postgres',
+    //   host: 'localhost',
+    //   database: 'carpool',
+    //   password: 'postgres',
+    //   port: 5432,
+    // });
     res.header('Access-Control-Allow-Origin', '*'); // CORS
     let row;
     db_client.connect();
@@ -69,15 +69,16 @@ async function main() {
 
     let start_date = req.query.start_date;
     let end_date = req.query.end_date;
-    let start_name = req.query.start_name;
+    // let start_name = req.query.start_name;
     let goal_name = req.query.goal_name;
     let desired_time = req.query.desired_time;
-    let ride_spot_name = '서울특별시 중구 통일로 13'; // 인자로 바꾸기
+    // let ride_start_name = req.query.start_name; // 탑승지 // 주소말고 장소이름으로 가능하도록 바꿔야함
+    let ride_start_name = '서울특별시 중구 통일로 13';
     let gender = req.query.gender;
     let dotw = req.query.dotw;
     
     if(Array.isArray(gender) == false) gender = [gender];// 성별을 한개 택했을 때도 Array로 변경
-    if(Array.isArray(dotw) == false) dotw =  [dotw];
+    if(Array.isArray(dotw) == false) dotw = [dotw];
     
     const QUERY_CARPOOL_FILTER = `
     SELECT
@@ -86,10 +87,20 @@ async function main() {
       join carpool on app_user.id = carpool.driver_id
       join driver using(driver_id)
     WHERE gender = ANY(array[${gender.map(x => `'${x}'`).join(',')}]) and
-      start_date <= '${start_date}' and end_date >= '${end_date}' and
       dotw @> array[${dotw.map(x => `'${x}'`).join(',')}]
     ;
     `
+    // const QUERY_CARPOOL_FILTER = `
+    // SELECT
+    //   name, gender, max_passenger, start_date, end_date, dotw, starting_point, starting_coord, destination_point, destination_coord
+    // FROM app_user 
+    //   join carpool on app_user.id = carpool.driver_id
+    //   join driver using(driver_id)
+    // WHERE gender = ANY(array[${gender.map(x => `'${x}'`).join(',')}]) and
+    //   start_date <= '${start_date}' and end_date >= '${end_date}' and
+    //   dotw @> array[${dotw.map(x => `'${x}'`).join(',')}]
+    // ;
+    // `
     // DB에서 카풀목록을 불러오고 추가적으로 소요시간을 계산하기 위해 좌표도 불러온다
     db_client.connect();
     let result;
@@ -100,24 +111,28 @@ async function main() {
     }
     await db_client.end(); // 비동기일 필요없음
     let rows = result.rows;
-
-    if(rows.length == 0) res.send([]);// 검색결과가 없는 경우
-
+    console.log('쿼리 rows: ' + rows.length);
+    console.log(QUERY_CARPOOL_FILTER);
     let data = [];
-    for await (const row of rows) {
-      let start = row['starting_coord'];
-      let goal = row['destination_coord'];
-      let ride_spot = await getGeo(ride_spot_name);
-      let old_duration = await getDuration(start, goal);
-      let duration = await getDuration(start, goal, ride_spot);
-      
-      data.push({row, 
-        ride_time: 0, 
-        time_difference : duration - old_duration,
-        distance_difference: 0,
-      });
+
+    if(rows.length == 0) {
+      res.send([]);// 검색결과가 없는 경우
+    } else {
+      for await (const row of rows) {
+        let start = row['starting_coord'];
+        let goal = row['destination_coord'];
+        let ride_spot = await getGeo(ride_start_name);
+        let old_duration = await getDuration(start, goal);
+        let duration = await getDuration(start, goal, ride_spot);
+        
+        data.push({row,
+          ride_time: 0,
+          time_difference : duration - old_duration,
+          distance_difference: 0,
+        });
+        res.json({data: data});// 결과 전송
+      }
     }
-    res.json({data: data});// 결과 전송
   });
   app.get('/register', async (req, res) => { // 카풀 등록하기
 
