@@ -27,20 +27,20 @@ const options = {
 
 async function main() {
   app.get('/list', (req, res) => { // 카풀 목록 불러오기
-    const db_client = new Client({ // 로컬
-      user: 'sdjin',
-      host: 'localhost',
-      database: 'sdjin',
-      password: 'tls888',
-      port: 5432,
-    });
-    // const db_client = new Client({
-    //   user: 'postgres',
+    // const db_client = new Client({ // 로컬
+    //   user: 'sdjin',
     //   host: 'localhost',
-    //   database: 'carpool',
-    //   password: 'postgres',
+    //   database: 'sdjin',
+    //   password: 'tls888',
     //   port: 5432,
     // });
+    const db_client = new Client({
+      user: 'postgres',
+      host: 'localhost',
+      database: 'carpool',
+      password: 'postgres',
+      port: 5432,
+    });
     res.header('Access-Control-Allow-Origin', '*'); // CORS
     let row;
     db_client.connect();
@@ -135,7 +135,7 @@ async function main() {
     }
   });
   app.get('/register', async (req, res) => { // 카풀 등록하기
-
+    
   });
   app.listen(3000, () => console.log('user connected?'));
 }
