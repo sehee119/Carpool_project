@@ -3,7 +3,7 @@ const axios = require('axios');
 async function test1() {
     const options = {
         method: 'GET',
-        url: 'http://ec2-18-117-73-79.us-east-2.compute.amazonaws.com:3000/list',
+        url: 'http://ec2-18-117-73-79.us-east-2.compute.amazonaws.com:3000/filter',
     }
 
     let res = await axios(options);
