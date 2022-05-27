@@ -86,7 +86,7 @@ async function main() {
       join carpool on app_user.id = carpool.driver_id
       join driver using(driver_id)
     WHERE gender = ANY(array[${gender.map(x => `'${x}'`).join(',')}]) and
-      end_date > '${start_date}' and
+      start_date <= '${start_date}' and end_date >= '${end_date}' and
       dotw @> array[${dotw.map(x => `'${x}'`).join(',')}]
     ;
     `
