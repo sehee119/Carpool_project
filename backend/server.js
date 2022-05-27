@@ -23,16 +23,17 @@ const options = {
   url: 'https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving',
   headers: { Accept: 'application/json', 'X-NCP-APIGW-API-KEY-ID' : api_key_id, 'X-NCP-APIGW-API-KEY' : api_key }
 }
-// const db_client = new Client({ // 로컬
-//   user: 'sdjin',
-//   host: 'localhost',
-//   database: 'sdjin',
-//   password: 'tls888',
-//   port: 5432,
-// });
+
 
 async function main() {
   app.get('/list', (req, res) => { // 카풀 목록 불러오기
+    // const db_client = new Client({ // 로컬
+    //   user: 'sdjin',
+    //   host: 'localhost',
+    //   database: 'sdjin',
+    //   password: 'tls888',
+    //   port: 5432,
+    // });
     const db_client = new Client({
       user: 'postgres',
       host: 'localhost',
@@ -50,6 +51,13 @@ async function main() {
     });
   });
   app.get('/filter', async (req, res) => { // 카풀 검색(필터)하기
+    // const db_client = new Client({ // 로컬
+    //   user: 'sdjin',
+    //   host: 'localhost',
+    //   database: 'sdjin',
+    //   password: 'tls888',
+    //   port: 5432,
+    // });
     const db_client = new Client({
       user: 'postgres',
       host: 'localhost',
@@ -59,14 +67,14 @@ async function main() {
     });
     res.header('Access-Control-Allow-Origin', '*'); // CORS
 
-    let start_name = req.query.start_name;
-    let goal_name = req.query.goal_name;
-    let ride_spot_name = '서울특별시 중구 통일로 13'; // 인자로 바꾸기
-    let gender = req.query.gender;
     let start_date = req.query.start_date;
     let end_date = req.query.end_date;
-    let dotw = req.query.dotw;
+    let start_name = req.query.start_name;
+    let goal_name = req.query.goal_name;
     let desired_time = req.query.desired_time;
+    let ride_spot_name = '서울특별시 중구 통일로 13'; // 인자로 바꾸기
+    let gender = req.query.gender;
+    let dotw = req.query.dotw;
     
     if(Array.isArray(gender) == false) gender = [gender];// 성별을 한개 택했을 때도 Array로 변경
     if(Array.isArray(dotw) == false) dotw =  [dotw];
@@ -109,9 +117,7 @@ async function main() {
         distance_difference: 0,
       });
     }
-    res.json(data); // 결과 전송// res.json({data: data})
-    console.log('data 갯수: ' + rows.length);
-    console.log(data);
+    res.json({data: data});// 결과 전송
   });
   app.get('/register', async (req, res) => { // 카풀 등록하기
 
