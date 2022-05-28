@@ -13,7 +13,7 @@ const { transGeo } = require('./src/NCP/transGeo.js');
 
 const QUERY_CARPOOL_LIST = `
 SELECT
-  name, gender, max_passenger, start_date, end_date, dotw, starting_point, starting_coord, destination_point, destination_coord
+  name, gender, max_passenger, start_date::text, end_date::text, dotw, starting_point, starting_coord, destination_point, destination_coord
 FROM app_user 
 	join carpool on app_user.id = carpool.driver_id
 	join driver using(driver_id);
