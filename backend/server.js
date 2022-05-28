@@ -16,7 +16,8 @@ SELECT
   name, gender, max_passenger, start_date::text, end_date::text, dotw, starting_point, starting_coord, destination_point, destination_coord
 FROM app_user 
 	join carpool on app_user.id = carpool.driver_id
-	join driver using(driver_id);
+	join driver using(driver_id)
+ORDER BY created;
 `;
 const QUERY_CARPOOL_FILTER = `
 SELECT
@@ -34,7 +35,7 @@ WITH new_carpool AS (
     default, $1, $2, $3, $4, 
       $5, $6,
       $7, $8, 
-      $9, $10)
+      $9, $10, NOW())
   RETURNING driver_id)
 INSERT INTO driver 
   (SELECT driver_id, $11, $12, 0 FROM new_carpool)
@@ -148,20 +149,6 @@ async function main() {
   });
   // 카풀 등록하기
   app.post('/register', async (req, res) => {
-    let driver_name = req.body.name; // 이미 알고있음
-    let driver_gender = req.body.gender; // 이미 알고있음
-    let max_passenger = req.body.max_passenger;
-    let start_date = req.body.start_date;
-    let end_date = req.body.end_date;
-    let dotw = req.body.dotw;
-    let starting_point = req.body.start_name;
-    let destination_point = req.body.goal_name;
-    let desried_arrival_time = req.body.arrival_time;
-    let car_num = req.body.car_num;
-    let car_category = req.body.car_category;
-
-    if (Array.isArray(dotw) == false) dotw = [dotw];
-
     // const db_client = new Client({
     //   // 로컬
     //   user: 'postgres',
@@ -177,10 +164,23 @@ async function main() {
       password: 'postgres',
       port: 5432,
     });
-    let db_result = {};
+    let driver_name = req.body.name; // 이미 알고있음
+    let driver_gender = req.body.gender; // 이미 알고있음
+    let max_passenger = req.body.max_passenger;
+    let start_date = req.body.start_date;
+    let end_date = req.body.end_date;
+    let dotw = req.body.dotw;
+    let starting_point = req.body.start_name;
+    let destination_point = req.body.goal_name;
+    let desried_arrival_time = req.body.arrival_time;
+    let car_num = req.body.car_num;
+    let car_category = req.body.car_category;
+
+    if (Array.isArray(dotw) == false) dotw = [dotw];
+
     await db_client.connect();
     try {
-      db_result = await db_client.query(INSERT_CARPOOL_NEW, [
+      await db_client.query(INSERT_CARPOOL_NEW, [
         req.body.client_id, // 클라이언트의 DB의 실제 id
         start_date,
         end_date,
@@ -204,7 +204,9 @@ async function main() {
     res.status(200).json({ status: 'success', message: '등록되었습니다.' });
   });
   // 카풀 신청하기
-  app.get('/candidate', async (req, res) => {});
+  app.get('/candidate', async (req, res) => {
+
+  });
   app.listen(3000, () => console.log('user connected?'));
 }
 
