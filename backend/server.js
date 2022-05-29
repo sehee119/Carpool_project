@@ -11,6 +11,13 @@ const { getGeo } = require('./src/NCP/getGeo.js');
 const { getDuration } = require('./src/NCP/getDuration.js');
 const { transGeo } = require('./src/NCP/transGeo.js');
 
+const db_config = {
+  user: 'postgres',
+  host: 'localhost',
+  database: 'carpool',
+  password: 'postgres',
+  port: 5432,
+};
 const QUERY_CARPOOL_LIST = `
 SELECT
   name, gender, max_passenger, start_date::text, end_date::text, dotw, starting_point, starting_coord, destination_point, destination_coord
@@ -41,6 +48,12 @@ INSERT INTO driver
   (SELECT driver_id, $11, $12, 0 FROM new_carpool)
   ON CONFLICT DO NOTHING;    
 `;
+const INSERT_CARPOOL_CANDIDATE = `
+INSERT INTO candidate VALUES (
+  $1, $2, $3,
+  $4, $5,
+  $6, $7, false);
+`;
 // 카풀 목록 불러오기
 async function main() {
   app.get('/list', (req, res) => {
@@ -52,13 +65,7 @@ async function main() {
     //   password: 'postgres',
     //   port: 5432,
     // });
-    const db_client = new Client({
-      user: 'postgres',
-      host: 'localhost',
-      database: 'carpool',
-      password: 'postgres',
-      port: 5432,
-    });
+    const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
     let row;
     db_client.connect();
@@ -80,13 +87,7 @@ async function main() {
     //   password: 'postgres',
     //   port: 5432,
     // });
-    const db_client = new Client({
-      user: 'postgres',
-      host: 'localhost',
-      database: 'carpool',
-      password: 'postgres',
-      port: 5432,
-    });
+    const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
 
     let start_date = req.query.start_date;
@@ -139,13 +140,11 @@ async function main() {
         distance_difference: 0,
       });
     }
-    res
-      .status(200)
-      .json({
-        status: 'success',
-        message: '목록 불러오기 성공',
-        data: search_data,
-      }); // 결과 전송 to client
+    res.status(200).json({
+      status: 'success',
+      message: '목록 불러오기 성공',
+      data: search_data,
+    }); // 결과 전송 to client
   });
   // 카풀 등록하기
   app.post('/register', async (req, res) => {
@@ -157,13 +156,8 @@ async function main() {
     //   password: 'postgres',
     //   port: 5432,
     // });
-    const db_client = new Client({
-      user: 'postgres',
-      host: 'localhost',
-      database: 'carpool',
-      password: 'postgres',
-      port: 5432,
-    });
+    const db_client = new Client(db_config);
+
     let driver_name = req.body.name; // 이미 알고있음
     let driver_gender = req.body.gender; // 이미 알고있음
     let max_passenger = req.body.max_passenger;
@@ -204,8 +198,40 @@ async function main() {
     res.status(200).json({ status: 'success', message: '등록되었습니다.' });
   });
   // 카풀 신청하기
-  app.get('/candidate', async (req, res) => {
+  app.post('/candidate', async (req, res) => {
+    const db_client = await Client(db_config);
+    // const db_client = new Client({
+    //   // 로컬
+    //   user: 'postgres',
+    //   host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
+    //   database: 'carpool',
+    //   password: 'postgres',
+    //   port: 5432,
+    // });
 
+    let carpool_id = req.body.carpool_id;
+    let ride_spot = req.body.start_name;
+    let start_date = req.body.start_date;
+    let end_date = req.body.end_date;
+    let dotw = req.body.dotw;
+
+    await db_client.connect();
+    try {
+      await db_client.query(INSERT_CARPOOL_CANDIDATE, [
+        carpool_id,
+        req.body.user_id, // 사용자 id
+        ride_spot,
+        start_date,
+        end_date,
+        dotw,
+        req.body.desired_time // 탑승 예정시간(사용자 입력)
+      ]);
+    } catch(error) {
+      console.log(error.message);
+      res.status(400).json({ message: error.message });
+    }
+    await db_client.end();
+    res.status(200).json({ status: 'success', message: '등록되었습니다.' });
   });
   app.listen(3000, () => console.log('user connected?'));
 }
