@@ -199,7 +199,7 @@ async function main() {
   });
   // 카풀 신청하기
   app.post('/candidate', async (req, res) => {
-    const db_client = await Client(db_config);
+    const db_client = new Client(db_config);
     // const db_client = new Client({
     //   // 로컬
     //   user: 'postgres',
