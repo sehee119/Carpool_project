@@ -217,6 +217,8 @@ async function main() {
     let dotw = req.body.dotw;
     let desired_time = req.body.desired_time;
 
+    if (Array.isArray(dotw) == false) dotw = [dotw];
+
     await db_client.connect();
     try {
       await db_client.query(INSERT_CARPOOL_CANDIDATE, [
