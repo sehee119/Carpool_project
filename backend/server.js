@@ -210,25 +210,28 @@ async function main() {
     // });
 
     let carpool_id = req.body.carpool_id;
+    let user_id = req.body.user_id;
     let ride_spot = req.body.start_name;
     let start_date = req.body.start_date;
     let end_date = req.body.end_date;
     let dotw = req.body.dotw;
+    let desired_time = req.body.desired_time;
 
     await db_client.connect();
     try {
       await db_client.query(INSERT_CARPOOL_CANDIDATE, [
         carpool_id,
-        req.body.user_id, // 사용자 id
+        user_id, // 사용자 id
         ride_spot,
         start_date,
         end_date,
         dotw,
-        req.body.desired_time // 탑승 예정시간(사용자 입력)
+        desired_time // 탑승 예정시간(사용자 입력)
       ]);
     } catch(error) {
       console.log(error.message);
       res.status(400).json({ message: error.message });
+      return;
     }
     await db_client.end();
     res.status(200).json({ status: 'success', message: '등록되었습니다.' });
