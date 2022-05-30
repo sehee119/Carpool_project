@@ -156,6 +156,7 @@ async function main() {
     //   password: 'postgres',
     //   port: 5432,
     // });
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
     const db_client = new Client(db_config);
 
     let driver_name = req.body.name; // 이미 알고있음
@@ -199,6 +200,7 @@ async function main() {
   });
   // 카풀 신청하기
   app.post('/candidate', async (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
     const db_client = new Client(db_config);
     // const db_client = new Client({
     //   // 로컬
