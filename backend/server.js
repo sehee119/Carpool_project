@@ -3,9 +3,11 @@ require('dotenv').config({ path: './.env' });
 const { Client } = require('pg');
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 const { getGeo } = require('./src/NCP/getGeo.js');
 const { getDuration } = require('./src/NCP/getDuration.js');
