@@ -24,8 +24,8 @@ async function getGeo(name) {
   } catch (err) {
     console.error("Geo 정보를 불러오지 못했습니다.");
   }
-  let address = res.data.address ? res.data.addresses[0] : { x: 0, y: 0 };
-
+  let address = res.data.meta.totalCount > 0 ? res.data.addresses[0] : { x: 0, y: 0 };
+  
   return address.x + "," + address.y;
 }
 
