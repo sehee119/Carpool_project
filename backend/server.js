@@ -242,6 +242,46 @@ async function main() {
     await db_client.end();
     res.status(200).json({ status: 'success', message: '등록되었습니다.' });
   });
+	
+  app.get('/map', (req, res) => {
+    res.sendFile(__dirname + '/map.html');
+  })
+  app.post('/map', (req, res) => {
+    var start = function () {
+    	return new Promise(function (resolve, reject) {
+    		setTimeout(function () {
+    			resolve(transGeo(req.body.start_place));
+    		}, 1000);
+    	})
+      .then(function(result) {
+        return getGeo(result);
+      })
+    };
+
+    var goal = function () {
+    	return new Promise(function (resolve, reject) {
+    		setTimeout(function () {
+    			resolve(transGeo(req.body.goal_place));
+    		}, 1000);
+    	})
+      .then(function(result) {
+        return getGeo(result);
+      })
+    };
+
+    async function route(){
+      let a = await start();
+      let b = await goal();
+      return makeMarker(a, b);
+    }
+
+    Promise.all([start(), goal(), route()]).then(function (values) {
+	//console.log("모두 완료됨", values);
+   res.render('map', {
+     xy: values
+   })
+});
+  })
   app.listen(3000, () => console.log('user connected?'));
 }
 
