@@ -16,30 +16,28 @@ async function makeMarker() { // 다수의 좌표를 인자로 받음
     //console.log(JSON.stringify(res.data));
 
     //res1 = res.data['route']['traoptimal'][0]['summary']['duration'];
-    start_x = res.data['route']['traoptimal'][0]['summary']['start']['location'][0];
-    start_y = res.data['route']['traoptimal'][0]['summary']['start']['location'][1];
-    goal_x = res.data['route']['traoptimal'][0]['summary']['goal']['location'][0];
-    goal_y = res.data['route']['traoptimal'][0]['summary']['goal']['location'][1];
-    start_xy = [start_x, start_y];
-    goal_xy = [goal_x, goal_y];
-    var route = [start_xy]
-
-
+    var routeArr = new Array()
+    res1 = res.data['route']['traoptimal'][0]['summary']['duration'];
+    // start_x = res.data['route']['traoptimal'][0]['summary']['start']['location'][0];
+    // start_y = res.data['route']['traoptimal'][0]['summary']['start']['location'][1];
+    // goal_x = res.data['route']['traoptimal'][0]['summary']['goal']['location'][0];
+    // goal_y = res.data['route']['traoptimal'][0]['summary']['goal']['location'][1];
+    routeArr.push(res.data['route']['traoptimal'][0]['summary']['start']['location']);
 
     var i = 0
-    while (res.data['route']['traoptimal'][0]['path'][0]){ //x값
-      route_x = res.data['route']['traoptimal'][0]['path'][i][0]
-      route_y = res.data['route']['traoptimal'][0]['path'][i][1]
-      route.push([route_x, route_y])
-      console.log("route   " , route_x, route_y)
+    while (res.data['route']['traoptimal'][0]['path'][i]){ //x값
+      //route_x = res.data['route']['traoptimal'][0]['path'][i][0]
+      //route_y = res.data['route']['traoptimal'][0]['path'][i][1]
+      //console.log("route   " , res.data['route']['traoptimal'][0]['path'][i])
+      routeArr.push(res.data['route']['traoptimal'][0]['path'][i])
       i = i + 1;
     }
-    route.push([goal_xy])
+    routeArr.push([res.data['route']['traoptimal'][0]['summary']['goal']['location'][0], res.data['route']['traoptimal'][0]['summary']['goal']['location'][1]]);
 
-    //console.log("------" + res.data['route']['traoptimal'][0]['path'])
-    console.log(route)
+    //console.log("------" + routeArr)
 
-    return route;
+
+    return routeArr;
 }
 
 exports.makeMarker = makeMarker;
