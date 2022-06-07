@@ -56,7 +56,7 @@ WITH new_carpool AS (
   RETURNING driver_id)
 INSERT INTO driver 
   (SELECT driver_id, $11, $12, 0 FROM new_carpool)
-  ON CONFLICT DO NOTHING;    
+  ON CONFLICT DO NOTHING;
 `;
 const INSERT_CARPOOL_CANDIDATE = `
 INSERT INTO candidate VALUES (
@@ -213,9 +213,9 @@ async function main() {
         end_date,
         dotw,
         starting_point,
-        await getGeo(transGeo(starting_point)),
+        await getGeo(await transGeo(starting_point)),
         destination_point,
-        await getGeo(transGeo(destination_point)),
+        await getGeo(await transGeo(destination_point)),
         desried_arrival_time,
         max_passenger,
         car_category,
