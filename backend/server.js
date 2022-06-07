@@ -27,6 +27,15 @@ FROM app_user
 	join carpool on app_user.id = carpool.driver_id
 	join driver using(driver_id);
 `;
+const QUERY_CARPOOL_LIST_BY_ID = `
+SELECT
+	carpool.id as carpool_id, name, gender, max_passenger, start_date, end_date, dotw, starting_point, destination_point, desired_arrival_time
+FROM app_user 
+	join carpool on app_user.id = carpool.driver_id
+	join driver using(driver_id)
+WHERE
+	carpool.id = $1
+;`;
 const QUERY_CARPOOL_FILTER = `
 SELECT
   name, gender, max_passenger, start_date::text, end_date::text, dotw, starting_point, starting_coord, destination_point, destination_coord
@@ -71,6 +80,28 @@ async function main() {
     let row;
     db_client.connect();
     db_client.query(QUERY_CARPOOL_LIST, (error, results) => {
+      row = error ? error.stack : results.rows; // 카풀 목록 Object
+      res
+        .status(200)
+        .json({ status: 'success', message: '목록 불러오기 성공', data: row });
+      db_client.end();
+    });
+  });
+  app.get('/list/:id', (req, res) => {
+    // const db_client = new Client({
+    //   // 로컬
+    //   user: 'postgres',
+    //   host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
+    //   database: 'carpool',
+    //   password: 'postgres',
+    //   port: 5432,
+    // });
+    const db_client = new Client(db_config);
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
+    let row;
+    let carpool_id = req.params.id;
+    db_client.connect();
+    db_client.query(QUERY_CARPOOL_LIST_BY_ID, [carpool_id], (error, results) => {
       row = error ? error.stack : results.rows; // 카풀 목록 Object
       res
         .status(200)
