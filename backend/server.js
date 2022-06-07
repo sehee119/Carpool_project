@@ -22,11 +22,10 @@ const db_config = {
 };
 const QUERY_CARPOOL_LIST = `
 SELECT
-  name, gender, max_passenger, start_date::text, end_date::text, dotw, starting_point, starting_coord, destination_point, destination_coord
+	carpool.id as carpool_id, name, gender, max_passenger, start_date, end_date, dotw, starting_point, destination_point, desired_arrival_time
 FROM app_user 
 	join carpool on app_user.id = carpool.driver_id
-	join driver using(driver_id)
-ORDER BY created;
+	join driver using(driver_id);
 `;
 const QUERY_CARPOOL_FILTER = `
 SELECT
