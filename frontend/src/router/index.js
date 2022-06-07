@@ -1,48 +1,70 @@
 import Vue from 'vue'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
+import Home from '../views/Home.vue'
+import Info from '../views/Info.vue'
+import Past from '../views/Past.vue'
+import Request from '../views/Request.vue'
+import Passenger from '../views/Passenger.vue'
+import Driver from '../views/Driver.vue'
+import Chat from '../views/Chat.vue'
 
-Vue.use(Router)
+Vue.use(VueRouter)
 
-import Chat from '@/views/Chat'
-import Driver from '@/views/Driver'
-import Home from '@/views/Home'
-import Mypage from '@/views/Mypage'
-import Passenger from '@/views/Passenger'
-import Request from '@/views/Request'
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: Home
+  },
 
+  {
+    path: '/info',
+    name: 'Info',
+    component: Info
+  },
 
-export default new Router({
+  
+
+  {
+    path: '/past',
+    name: 'Past',
+    component: Past
+  },
+
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: Chat
+  },
+
+  {
+    path: '/driver',
+    name: 'Driver',
+    component: Driver
+  },
+
+  {
+    path: '/passenger',
+    name: 'Passenger',
+    component: Passenger
+  },
+
+  {
+    path: '/request',
+    name: 'Request',
+    component: Request
+  }
+]
+
+const router = new VueRouter({
   mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'Home',
-      component: Home
-    },
-    {
-      path: '/Chat',
-      name: 'Chat',
-      component: Chat
-    },
-    {
-      path: '/Driver',
-      name: 'Driver',
-      component: Driver
-    },
-    {
-      path: '/Mypage',
-      name: 'Mypage',
-      component: Mypage
-    },
-    {
-      path: '/Passenger',
-      name: 'Passenger',
-      component: Passenger
-    },
-    {
-      path: '/Request',
-      name: 'Request',
-      component: Request
-    }
-  ]
+  base: process.env.BASE_URL,
+  routes
 })
+
+
+
+
+
+
+export default router
