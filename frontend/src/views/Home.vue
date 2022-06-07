@@ -809,7 +809,7 @@ export default {
             search_destination_point:'',
             search_gender:'',
             search_dotw:'',
-            search_dates: ['2022-05-24', '2022-05-31'], // [0]:시작일 [1]:종료일
+            search_dates: ['2022-06-14', '2022-06-21'], // [0]:시작일 [1]:종료일
             
             search_estimated_start_time:'',
             search_destination_time:'', // 카풀 시간 받는 변수. 24h.
@@ -828,7 +828,7 @@ export default {
 
             input_name: null, // 카풀 등록
             input_max_passenger: null,
-            input_dates: ['2022-06-01', '2022-06-08'],
+            input_dates: ['2022-06-07', '2022-06-15'],
 
             input_dotw: null,
             input_starting_point:null,
@@ -980,6 +980,7 @@ export default {
           console.log(res)
           console.log("insertNew 함수입니다. 카풀 등록 진행합니다")
           this.resetForm() // 값 등록 성공후 자동으로 등록창 값 지운다.
+          this.get_data()
         })
         .catch(err => {
           console.log(err)
