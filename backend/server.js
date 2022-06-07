@@ -20,6 +20,13 @@ const db_config = {
   password: 'postgres',
   port: 5432,
 };
+const db_config_debug = {
+  user: 'postgres',
+  host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
+  database: 'carpool',
+  password: 'postgres',
+  port: 5432,
+}
 const QUERY_CARPOOL_LIST = `
 SELECT
 	carpool.id as carpool_id, name, gender, max_passenger, start_date, end_date, dotw, starting_point, destination_point, desired_arrival_time
@@ -67,14 +74,7 @@ INSERT INTO candidate VALUES (
 // 카풀 목록 불러오기
 async function main() {
   app.get('/list', (req, res) => {
-    // const db_client = new Client({
-    //   // 로컬
-    //   user: 'postgres',
-    //   host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
-    //   database: 'carpool',
-    //   password: 'postgres',
-    //   port: 5432,
-    // });
+    // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
     let row;
@@ -88,14 +88,7 @@ async function main() {
     });
   });
   app.get('/list/:id', (req, res) => {
-    // const db_client = new Client({
-    //   // 로컬
-    //   user: 'postgres',
-    //   host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
-    //   database: 'carpool',
-    //   password: 'postgres',
-    //   port: 5432,
-    // });
+    // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
     let row;
@@ -111,14 +104,7 @@ async function main() {
   });
   // 카풀 검색(필터)하기
   app.get('/filter', async (req, res) => {
-    // const db_client = new Client({
-    //   // 로컬
-    //   user: 'postgres',
-    //   host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
-    //   database: 'carpool',
-    //   password: 'postgres',
-    //   port: 5432,
-    // });
+    // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
 
@@ -180,16 +166,9 @@ async function main() {
   });
   // 카풀 등록하기
   app.post('/register', async (req, res) => {
-    // const db_client = new Client({
-    //   // 로컬
-    //   user: 'postgres',
-    //   host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
-    //   database: 'carpool',
-    //   password: 'postgres',
-    //   port: 5432,
-    // });
-    res.header('Access-Control-Allow-Origin', '*'); // CORS
+    // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
 
     let driver_name = req.body.name; // 이미 알고있음
     let driver_gender = req.body.gender; // 이미 알고있음
@@ -232,16 +211,9 @@ async function main() {
   });
   // 카풀 신청하기
   app.post('/candidate', async (req, res) => {
-    res.header('Access-Control-Allow-Origin', '*'); // CORS
+    // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
-    // const db_client = new Client({
-    //   // 로컬
-    //   user: 'postgres',
-    //   host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
-    //   database: 'carpool',
-    //   password: 'postgres',
-    //   port: 5432,
-    // });
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
 
     let carpool_id = req.body.carpool_id;
     let user_id = req.body.user_id;
