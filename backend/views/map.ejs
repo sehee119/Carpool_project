@@ -11,21 +11,32 @@
 </head>
 
 <body>
-    <span id="xy" style="display:none;"><%= xy %></span>
-    <span id="start_xy" style="display:none;"><%= xy[0] %></span>
-    <span id="goal_xy" style="display:none;"><%= xy[1] %></span>
-    <span id="route_xy" style="display:none;"><%= xy[2] %></span>
-    <h1>NAVER MAP</h1>
-    <div id="map" style="width:100%;height:400px;"></div>
+    <!-- <span id="xy" style="display:none;"><%= xy %></span> -->
+    <span id="cnt" style="display:none;"><%= xy[0] %></span>
+    <span id="start_xy" style="display:none;"><%= xy[1] %></span>
+    <span id="goal_xy" style="display:none;"><%= xy[2] %></span>
+    <span id="stops1_xy" style="display:none;"><%= xy[3] %></span>
+    <span id="stops2_xy" style="display:none;"><%= xy[4] %></span>
+    <span id="route_xy" style="display:none;"><%= xy[5] %></span>
+
+    <div id="map" style="width:50%;height:400px;"></div>
     <script>
-      var xy = document.getElementById("xy").innerHTML;
+      //var xy = document.getElementById("xy").innerHTML;
+      var cnt = document.getElementById("cnt").innerHTML;
       var start_xy = document.getElementById("start_xy").innerHTML;
       var goal_xy = document.getElementById("goal_xy").innerHTML;
+      var stops1_xy = document.getElementById("stops1_xy").innerHTML;
+      var stops2_xy = document.getElementById("stops2_xy").innerHTML;
       var route_xy = document.getElementById("route_xy").innerHTML;
 
+      if (cnt == 2){
+        route_xy = stops1_xy;
+      }
+      else if (cnt == 3){
+        route_xy = stops2_xy;
+      }
 
-      // var start_place = start_place;
-       var start = start_xy.split(',');
+        var start = start_xy.split(',');
         var start_place = start_place
         var start_lat = parseFloat(start[1])
         var start_lng = parseFloat(start[0])
@@ -33,6 +44,17 @@
         var goal_place = goal_place
         var goal_lat = parseFloat(goal[1])
         var goal_lng = parseFloat(goal[0])
+
+        var stops1 = stops1_xy.split(',');
+        var stops1_place = stops1_place
+        var stops1_lat = parseFloat(stops1[1])
+        var stops1_lng = parseFloat(stops1[0])
+
+        var stops2 = stops2_xy.split(',');
+        var stops2_place = stops1_place
+        var stops2_lat = parseFloat(stops2[1])
+        var stops2_lng = parseFloat(stops2[0])
+
         var route_xy = route_xy.split(',');
         let lngArr = [];
         let latArr = [];
@@ -47,6 +69,9 @@
         const locations = [
             { place: start_place, lat: start_lat, lng: start_lng },
             { place: goal_place, lat: goal_lat, lng: goal_lng },
+            { place: stops1_place, lat: stops1_lat, lng: stops1_lng },
+            { place: stops2_place, lat: stops2_lat, lng: stops2_lng },
+
         ];
 
         let polylinePath = [];
