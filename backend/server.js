@@ -1,17 +1,29 @@
-require('dotenv').config({ path: './.env' });
+require('dotenv').config({
+  path: './.env'
+});
 
-const { Client } = require('pg');
+const {
+  Client
+} = require('pg');
 const express = require('express');
 const app = express();
 const cors = require('cors');
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+  extended: true
+}));
 app.use(cors());
 
-const { getGeo } = require('./src/NCP/getGeo.js');
-const { getDuration } = require('./src/NCP/getDuration.js');
-const { transGeo } = require('./src/NCP/transGeo.js');
+const {
+  getGeo
+} = require('./src/NCP/getGeo.js');
+const {
+  getDuration
+} = require('./src/NCP/getDuration.js');
+const {
+  transGeo
+} = require('./src/NCP/transGeo.js');
 
 const db_config = {
   user: 'postgres',
@@ -83,7 +95,11 @@ async function main() {
       row = error ? error.stack : results.rows; // 카풀 목록 Object
       res
         .status(200)
-        .json({ status: 'success', message: '목록 불러오기 성공', data: row });
+        .json({
+          status: 'success',
+          message: '목록 불러오기 성공',
+          data: row
+        });
       db_client.end();
     });
   });
@@ -98,7 +114,11 @@ async function main() {
       row = error ? error.stack : results.rows; // 카풀 목록 Object
       res
         .status(200)
-        .json({ status: 'success', message: '목록 불러오기 성공', data: row });
+        .json({
+          status: 'success',
+          message: '목록 불러오기 성공',
+          data: row
+        });
       db_client.end();
     });
   });
@@ -131,7 +151,10 @@ async function main() {
       ]);
     } catch (error) {
       console.log(error.message);
-      res.status(400).json({ status: 'error', message: error.message }); // 결과 전송 to client
+      res.status(400).json({
+        status: 'error',
+        message: error.message
+      }); // 결과 전송 to client
       return;
     }
     await db_client.end();
@@ -202,12 +225,18 @@ async function main() {
       ]);
     } catch (error) {
       console.log(error.message);
-      res.status(400).json({ status: 'error', message: error.message });
+      res.status(400).json({
+        status: 'error',
+        message: error.message
+      });
       return;
     }
     await db_client.end();
     console.log('새로운 카풀등록');
-    res.status(200).json({ status: 'success', message: '등록되었습니다.' });
+    res.status(200).json({
+      status: 'success',
+      message: '등록되었습니다.'
+    });
   });
   // 카풀 신청하기
   app.post('/candidate', async (req, res) => {
@@ -236,54 +265,120 @@ async function main() {
         dotw,
         desired_time // 탑승 예정시간(사용자 입력)
       ]);
-    } catch(error) {
+    } catch (error) {
       console.log(error.message);
-      res.status(400).json({ message: error.message });
+      res.status(400).json({
+        message: error.message
+      });
       return;
     }
     await db_client.end();
-    res.status(200).json({ status: 'success', message: '등록되었습니다.' });
+    res.status(200).json({
+      status: 'success',
+      message: '등록되었습니다.'
+    });
   });
-	
+
+
   app.get('/map', (req, res) => {
     res.sendFile(__dirname + '/map.html');
   })
   app.post('/map', (req, res) => {
-    var start = function () {
-    	return new Promise(function (resolve, reject) {
-    		setTimeout(function () {
-    			resolve(transGeo(req.body.start_place));
-    		}, 1000);
-    	})
-      .then(function(result) {
-        return getGeo(result);
-      })
+    var start = function() {
+      return new Promise(function(resolve, reject) {
+          setTimeout(function() {
+            resolve(transGeo(req.body.start_place));
+          }, 1000);
+        })
+        .then(function(result) {
+          return getGeo(result);
+        })
     };
 
-    var goal = function () {
-    	return new Promise(function (resolve, reject) {
-    		setTimeout(function () {
-    			resolve(transGeo(req.body.goal_place));
-    		}, 1000);
-    	})
-      .then(function(result) {
-        return getGeo(result);
-      })
+    var goal = function() {
+      return new Promise(function(resolve, reject) {
+          setTimeout(function() {
+            resolve(transGeo(req.body.goal_place));
+          }, 1000);
+        })
+        .then(function(result) {
+          return getGeo(result);
+        })
     };
 
-    async function route(){
+    if (req.body.stops1_place) {
+      var stops1 = function() {
+        return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+              resolve(transGeo(req.body.stops1_place));
+            }, 1000);
+          })
+          .then(function(result) {
+            return getGeo(result);
+          })
+      };
+    }
+    if (req.body.stops2_place) {
+      var stops2 = function() {
+        return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+              resolve(transGeo(req.body.stops2_place));
+            }, 1000);
+          })
+          .then(function(result) {
+            return getGeo(result);
+          })
+      };
+    }
+
+    async function route() {
       let a = await start();
       let b = await goal();
+      if (req.body.stops1_place) {
+        let c = await stops1();
+        if (req.body.stops2_place) {
+          let d = await stops2();
+          return makeMarker(a, b, c, d);
+        }
+        return makeMarker(a, b, c);
+      }
       return makeMarker(a, b);
     }
 
-    Promise.all([start(), goal(), route()]).then(function (values) {
-	//console.log("모두 완료됨", values);
-   res.render('map', {
-     xy: values
-   })
-});
+    if (req.body.stops2_place) {
+      var cnt = 4;
+    } else {
+      if (req.body.stops1_place) {
+        var cnt = 3;
+      } else {
+        var cnt = 2;
+      }
+    }
+
+    if (cnt == 4) {
+      Promise.all([cnt, start(), goal(), stops1(), stops2(), route()]).then(function(values) {
+        //console.log("모두 완료됨", values);
+        res.render('map', {
+          xy: values
+        })
+      });
+    } else if (cnt == 3) {
+      Promise.all([cnt, start(), goal(), stops1(), route()]).then(function(values) {
+        //console.log("모두 완료됨", values);
+        res.render('map', {
+          xy: values
+        })
+      });
+    } else if (cnt == 2) {
+      Promise.all([cnt, start(), goal(), route()]).then(function(values) {
+        //console.log("모두 완료됨", values);
+        res.render('map', {
+          xy: values
+        })
+      });
+    }
   })
+
   app.listen(3000, () => console.log('user connected?'));
 }
 
