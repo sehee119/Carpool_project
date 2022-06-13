@@ -1,29 +1,22 @@
-require('dotenv').config({
-  path: './.env'
-});
+require('dotenv').config({ path: './.env' });
 
-const {
-  Client
-} = require('pg');
+const fs = require('fs');
+const { Client } = require('pg');
 const express = require('express');
 const app = express();
 const cors = require('cors');
 
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 app.use(cors());
 
-const {
-  getGeo
-} = require('./src/NCP/getGeo.js');
-const {
-  getDuration
-} = require('./src/NCP/getDuration.js');
-const {
-  transGeo
-} = require('./src/NCP/transGeo.js');
+const { getGeo } = require('./src/NCP/getGeo.js');
+const { getDuration } = require('./src/NCP/getDuration.js');
+const { transGeo } = require('./src/NCP/transGeo.js');
 
 const db_config = {
   user: 'postgres',
@@ -38,15 +31,7 @@ const db_config_debug = {
   database: 'carpool',
   password: 'postgres',
   port: 5432,
-}
-const QUERY_CARPOOL_LIST = `
-SELECT
-	carpool.id as carpool_id, name, gender, max_passenger, start_date, end_date, dotw, starting_point, destination_point, desired_arrival_time
-FROM app_user 
-	join carpool on app_user.id = carpool.driver_id
-	join driver using(driver_id)
-ORDER BY created
-;`;
+};
 const QUERY_CARPOOL_LIST_BY_ID = `
 SELECT
 	carpool.id as carpool_id, name, gender, max_passenger, 
@@ -56,7 +41,7 @@ SELECT
 FROM app_user 
 	join carpool on app_user.id = carpool.driver_id
 	join driver using(driver_id)
-  	join candidate on carpool.id = candidate.carpool_id
+  join candidate on carpool.id = candidate.carpool_id
 WHERE app_user.id = $1
 ;`;
 const QUERY_CARPOOL_FILTER = `
@@ -96,41 +81,45 @@ WHERE id = $1;
 // 카풀 목록 불러오기
 async function main() {
   app.get('/list', (req, res) => {
-    // const db_client = new Client(db_config_debug); // 로컬
-    const db_client = new Client(db_config);
-    res.header('Access-Control-Allow-Origin', '*'); // CORS
     let row;
+    const DATA_SQL = fs.readFileSync('./sql/QueryList.sql').toString();
+    const db_client = new Client(db_config);
+    
+    // const db_client = new Client(db_config_debug); // 로컬
     db_client.connect();
-    db_client.query(QUERY_CARPOOL_LIST, (error, results) => {
+    db_client.query(DATA_SQL, (error, results) => {
       row = error ? error.stack : results.rows; // 카풀 목록 Object
-      res
-        .status(200)
-        .json({
-          status: 'success',
-          message: '목록 불러오기 성공',
-          data: row
-        });
+      res.status(200).json({
+        status: 'success',
+        message: '목록 불러오기 성공',
+        data: row,
+      });
       db_client.end();
     });
   });
   app.get('/list/:id', (req, res) => {
+    const DATA_SQL = fs.readFileSync('./sql/QueryListById.sql').toString();
+    let row;
+    let carpool_id = req.params.id;
+
     // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
-    let row;
-    let carpool_id = req.params.id;
+
     db_client.connect();
-    db_client.query(QUERY_CARPOOL_LIST_BY_ID, [carpool_id], (error, results) => {
-      row = error ? error.stack : results.rows; // 카풀 목록 Object
-      res
-        .status(200)
-        .json({
+    db_client.query(
+      DATA_SQL,
+      [carpool_id],
+      (error, results) => {
+        row = error ? error.stack : results.rows; // 카풀 목록 Object
+        res.status(200).json({
           status: 'success',
           message: '목록 불러오기 성공',
-          data: row
+          data: row,
         });
-      db_client.end();
-    });
+        db_client.end();
+      }
+    );
   });
   // 카풀 검색(필터)하기
   app.get('/filter', async (req, res) => {
@@ -163,7 +152,7 @@ async function main() {
       console.log(error.message);
       res.status(400).json({
         status: 'error',
-        message: error.message
+        message: error.message,
       }); // 결과 전송 to client
       return;
     }
@@ -237,7 +226,7 @@ async function main() {
       console.log(error.message);
       res.status(400).json({
         status: 'error',
-        message: error.message
+        message: error.message,
       });
       return;
     }
@@ -245,7 +234,7 @@ async function main() {
     console.log('새로운 카풀등록');
     res.status(200).json({
       status: 'success',
-      message: '등록되었습니다.'
+      message: '등록되었습니다.',
     });
   });
   // 카풀 신청하기
@@ -275,12 +264,12 @@ async function main() {
         start_date,
         end_date,
         dotw,
-        desired_time // 탑승 예정시간(사용자 입력)
+        desired_time, // 탑승 예정시간(사용자 입력)
       ]);
     } catch (error) {
       console.log(error.message);
       res.status(400).json({
-        message: error.message
+        message: error.message,
       });
       return;
     }
@@ -296,10 +285,10 @@ async function main() {
     await db_client.end();
     res.status(200).json({
       status: 'success',
-      message: '등록되었습니다.'
+      message: '등록되었습니다.',
     });
   });
-	app.post('/delete/carpool', async (req, res) => {
+  app.post('/delete/carpool', async (req, res) => {
     // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
@@ -311,68 +300,62 @@ async function main() {
     try {
       result = await db_client.query(DELETE_CARPOOL, [carpool_id]);
       // console.log(JSON.stringify(result));
-      console.log('요청된 카풀 id : %d ', carpool_id );
-    } catch(error) {
+      console.log('요청된 카풀 id : %d ', carpool_id);
+    } catch (error) {
       console.log(error.message);
-      res.status(400).json({ message : error.message });
+      res.status(400).json({ message: error.message });
       return;
     }
     await db_client.end();
-    res.status(200).json({ status: 'success', message: result.rowCount+' 행 삭제' });
-  })
-
-
-
-
+    res
+      .status(200)
+      .json({ status: 'success', message: result.rowCount + ' 행 삭제' });
+  });
 
   app.get('/map', (req, res) => {
     res.sendFile(__dirname + '/map.html');
-  })
+  });
   app.post('/map', (req, res) => {
-    var start = function() {
-      return new Promise(function(resolve, reject) {
-          setTimeout(function() {
-            resolve(transGeo(req.body.start_place));
-          }, 1000);
-        })
-        .then(function(result) {
-          return getGeo(result);
-        })
+    var start = function () {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          resolve(transGeo(req.body.start_place));
+        }, 1000);
+      }).then(function (result) {
+        return getGeo(result);
+      });
     };
 
-    var goal = function() {
-      return new Promise(function(resolve, reject) {
-          setTimeout(function() {
-            resolve(transGeo(req.body.goal_place));
-          }, 1000);
-        })
-        .then(function(result) {
-          return getGeo(result);
-        })
+    var goal = function () {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          resolve(transGeo(req.body.goal_place));
+        }, 1000);
+      }).then(function (result) {
+        return getGeo(result);
+      });
     };
 
     if (req.body.stops1_place) {
-      var stops1 = function() {
-        return new Promise(function(resolve, reject) {
-            setTimeout(function() {
-              resolve(transGeo(req.body.stops1_place));
-            }, 1000);
-          })
-          .then(function(result) {
-            return getGeo(result);
-          })
+      var stops1 = function () {
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            resolve(transGeo(req.body.stops1_place));
+          }, 1000);
+        }).then(function (result) {
+          return getGeo(result);
+        });
       };
     }
     if (req.body.stops2_place) {
-      var stops2 = function() {
-        return new Promise(function(resolve, reject) {
-            setTimeout(function() {
-              resolve(transGeo(req.body.stops2_place));
-            }, 1000);
-          })
-          .then(function(result) {
-            return getGeo(result);
-          })
+      var stops2 = function () {
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            resolve(transGeo(req.body.stops2_place));
+          }, 1000);
+        }).then(function (result) {
+          return getGeo(result);
+        });
       };
     }
 
@@ -401,28 +384,32 @@ async function main() {
     }
 
     if (cnt == 4) {
-      Promise.all([cnt, start(), goal(), stops1(), stops2(), route()]).then(function(values) {
-        //console.log("모두 완료됨", values);
-        res.render('map', {
-          xy: values
-        })
-      });
+      Promise.all([cnt, start(), goal(), stops1(), stops2(), route()]).then(
+        function (values) {
+          //console.log("모두 완료됨", values);
+          res.render('map', {
+            xy: values,
+          });
+        }
+      );
     } else if (cnt == 3) {
-      Promise.all([cnt, start(), goal(), stops1(), route()]).then(function(values) {
+      Promise.all([cnt, start(), goal(), stops1(), route()]).then(function (
+        values
+      ) {
         //console.log("모두 완료됨", values);
         res.render('map', {
-          xy: values
-        })
+          xy: values,
+        });
       });
     } else if (cnt == 2) {
-      Promise.all([cnt, start(), goal(), route()]).then(function(values) {
+      Promise.all([cnt, start(), goal(), route()]).then(function (values) {
         //console.log("모두 완료됨", values);
         res.render('map', {
-          xy: values
-        })
+          xy: values,
+        });
       });
     }
-  })
+  });
 
   app.listen(3000, () => console.log('user connected?'));
 }
