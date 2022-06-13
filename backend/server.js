@@ -58,7 +58,7 @@ WHERE
 ;`;
 const QUERY_CARPOOL_FILTER = `
 SELECT
-  name, gender, max_passenger, start_date::text, end_date::text, 
+  carpool.id as carpool_id, name, gender, max_passenger, start_date::text, end_date::text, 
   dotw, starting_point, starting_coord, destination_point, destination_coord
   
 FROM app_user 
@@ -259,6 +259,8 @@ async function main() {
     let dotw = req.body.dotw;
     let desired_time = req.body.desired_time;
 
+    let db_result; //
+
     if (Array.isArray(dotw) == false) dotw = [dotw];
 
     await db_client.connect();
@@ -279,6 +281,15 @@ async function main() {
       });
       return;
     }
+    // try {
+    //   db_result = await db_client.query(QUERY_CARPOOL_CANDIDATE);
+    // } catch (error) {
+    //   console.log(error.message);
+    //   res.status(400).json({
+    //     message: error.message
+    //   });
+    //   return;
+    // }
     await db_client.end();
     res.status(200).json({
       status: 'success',
@@ -304,7 +315,7 @@ async function main() {
       return;
     }
     await db_client.end();
-    res.status(200).json({ status: 'success', message: result.rowCount+'행 삭제' });
+    res.status(200).json({ status: 'success', message: result.rowCount+' 행 삭제' });
   })
 
 
