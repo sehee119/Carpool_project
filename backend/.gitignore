@@ -1,0 +1,3 @@
+node_module
+test_*
+.DS_Store
