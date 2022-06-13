@@ -34,7 +34,7 @@ const db_config = {
 };
 const db_config_debug = {
   user: 'postgres',
-  host: 'ec2-18-117-73-79.us-east-2.compute.amazonaws.com',
+  host: 'ec2-3-37-128-210.ap-northeast-2.compute.amazonaws.com',
   database: 'carpool',
   password: 'postgres',
   port: 5432,
@@ -45,7 +45,7 @@ SELECT
 FROM app_user 
 	join carpool on app_user.id = carpool.driver_id
 	join driver using(driver_id)
-ORDERY BY created
+ORDER BY created
 ;`;
 const QUERY_CARPOOL_LIST_BY_ID = `
 SELECT
