@@ -303,7 +303,7 @@ async function main() {
       return;
     }
     await db_client.end();
-    res.status(200).json({ status: 'success', message: '삭제되었습니다.' });
+    res.status(200).json({ status: 'success', message: result.rows });
   })
 
 
