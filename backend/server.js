@@ -58,7 +58,9 @@ WHERE
 ;`;
 const QUERY_CARPOOL_FILTER = `
 SELECT
-  name, gender, max_passenger, start_date::text, end_date::text, dotw, starting_point, starting_coord, destination_point, destination_coord
+  name, gender, max_passenger, start_date::text, end_date::text, 
+  dotw, starting_point, starting_coord, destination_point, destination_coord
+  
 FROM app_user 
   join carpool on app_user.id = carpool.driver_id
   join driver using(driver_id)
@@ -284,14 +286,17 @@ async function main() {
     });
   });
 	app.post('/delete/carpool', async (req, res) => {
+    // const db_client = new Client(db_config_debug); // 로컬
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
 
     let carpool_id = req.body.carpool_id;
+    let result;
 
     await db_client.connect();
     try {
-      await db_client.query(DELETE_CARPOOL, [carpool_id]);
+      result = await db_client.query(DELETE_CARPOOL, [carpool_id]);
+      console.log(JSON.stringify(result));
     } catch(error) {
       console.log(error.message);
       res.status(400).json({ message : error.message });
