@@ -26,7 +26,7 @@ async function getGeo(name) {
   // console.log(JSON.stringify(res.data));
   let data = res.data;
   if(data.meta == undefined || data.meta.totalCount == 0) {
-    return { x: 0, y: 0 };
+    return '0,0';
   }
   let addr = data.addresses[0]
   return addr.x + "," + addr.y;

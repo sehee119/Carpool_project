@@ -11,7 +11,7 @@ CREATE TABLE app_user(
 DROP TABLE IF EXISTS driver;
 CREATE TABLE driver (
 	driver_id int PRIMARY KEY,
-	car_category int,
+	car_category varchar,
 	car_num varchar,
 	drive_count int,
 	foreign key(driver_id) references app_user
@@ -28,7 +28,8 @@ CREATE TABLE carpool (
 	destination_point varchar,
 	destination_coord varchar,
 	desired_arrival_time time,
-	max_passenger int
+	max_passenger int,
+	created timestamp
 );
 DROP TABLE IF EXISTS candidate;
 CREATE TABLE candidate (
@@ -57,40 +58,40 @@ insert into driver values (4, 3, '11바0707', 0);
 insert into driver values (5, 3, '27사1122', 2);
 
 insert into carpool values(
-	default, 1, '2022-05-13', '2022-05-27', ARRAY['월','화','수'], 
+	default, 1, '2022-05-13', '2022-06-27', ARRAY['월','화','수'], 
 		'부평역', '126.7233507,37.4895676',
 		'인하대', '126.6538126,37.4507292', 
-		'09:00', 3);
+		'09:00', 3, NOW());
 insert into carpool values(
-	default, 2, '2022-05-16', '2022-05-27', ARRAY['월','화','목','금'], 
-		'서울시청', '126.9715661,37.5568086',
+	default, 2, '2022-05-16', '2022-07-27', ARRAY['월','화','목','금'], 
+		'서울시청', '126.9783882,37.5666103',
 		'인천항', '126.6022125,37.4538096',
-		'08:40', 2);
+		'08:40', 2, NOW());
 insert into carpool values(
 	default, 3, '2022-05-20', '2022-06-15', ARRAY['월','화','수','목','금'], 
-		'강남역', '126.9715661,37.5568086',
+		'강남역', '127.0283079,37.4981647',
 		'인하대', '126.6538126,37.4507292',
-		'08:30', 2);
+		'08:30', 2, NOW());
 insert into carpool values(
-	default, 4, '2022-05-20', '2022-06-15', ARRAY['화','수','목','금'], 
-		'노원역', '126.9715661,37.5568086',
+	default, 4, '2022-05-20', '2022-08-15', ARRAY['화','수','목','금'], 
+		'노원역', '127.0630304,37.6562678',
 		'인하대', '126.6538126,37.4507292',
-		'09:00', 2);
+		'09:00', 2, NOW());
 insert into carpool values(
-	default, 5, '2022-05-20', '2022-06-15', ARRAY['수','목','금'], 
-		'광진구청', '126.9715661,37.5568086',
-		'일산역', '126.6538126,37.4507292',
-		'08:40', 2);
+	default, 5, '2022-05-20', '2022-10-15', ARRAY['수','목','금'], 
+		'광진구청', '127.0823750,37.5386170',
+		'일산역', '126.7694781,37.6821407',
+		'08:40', 2, NOW());
+
 insert into candidate values(
 	1, 3, '동암역', '2022-05-15', '2022-05-27', ARRAY['월', '화', '수'], '08:30', false
-);
-insert into candidate values(
-	1, 2, '동암역', '2022-05-15', '2022-05-27', '{월,목}', '08:30', false
 );
 
 select * from driver;
 select * from app_user;
 select * from carpool;
 select * from candidate;
+
+delete from carpool where id = 6;
 
 
