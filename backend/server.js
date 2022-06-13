@@ -303,7 +303,7 @@ async function main() {
       return;
     }
     await db_client.end();
-    res.status(200).json({ status: 'success', message: result.rows });
+    res.status(200).json({ status: 'success', message: result.rowCount+'행 삭제' });
   })
 
 
