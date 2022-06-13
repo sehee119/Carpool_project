@@ -296,7 +296,8 @@ async function main() {
     await db_client.connect();
     try {
       result = await db_client.query(DELETE_CARPOOL, [carpool_id]);
-      console.log(JSON.stringify(result));
+      // console.log(JSON.stringify(result));
+      console.log('요청된 카풀 id : $d ', carpool_id );
     } catch(error) {
       console.log(error.message);
       res.status(400).json({ message : error.message });
