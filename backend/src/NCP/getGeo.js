@@ -10,8 +10,6 @@ async function getGeo(name) {
   const options = {
     method: "GET",
     url: url,
-    // url: url + '?query=' + encodeURIComponent(name),
-    // params: { query: encodeURIComponent(name) },
     headers: {
       Accept: "application/json",
       "X-NCP-APIGW-API-KEY-ID": api_key_id,
@@ -24,9 +22,14 @@ async function getGeo(name) {
   } catch (err) {
     console.error("Geo 정보를 불러오지 못했습니다.");
   }
-  let address = res.data.meta.totalCount > 0 ? res.data.addresses[0] : { x: 0, y: 0 };
   
-  return address.x + "," + address.y;
+  // console.log(JSON.stringify(res.data));
+  let data = res.data;
+  if(data.meta == undefined || data.meta.totalCount == 0) {
+    return { x: 0, y: 0 };
+  }
+  let addr = data.addresses[0]
+  return addr.x + "," + addr.y;
 }
 
 exports.getGeo = getGeo;
