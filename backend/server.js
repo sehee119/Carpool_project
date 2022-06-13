@@ -34,14 +34,13 @@ async function main() {
   app.get('/list', (req, res) => {
     let row;
     const DATA_SQL = fs.readFileSync('./sql/QueryList.sql').toString();
-    const db_client = new Client(db_config);
-    // const db_client = new Client(db_config_debug); // 로컬
+    // const db_client = new Client(db_config);
+    const db_client = new Client(db_config_debug); // 로컬
 
     db_client.connect();
     db_client.query(DATA_SQL, (error, results) => {
       row = error ? error.stack : results.rows; // 카풀 목록 Object
       res.status(200).json({
-        status: 'success',
         message: '목록 불러오기 성공',
         data: row,
       });
@@ -60,7 +59,6 @@ async function main() {
     db_client.query(DATA_SQL, [carpool_id], (error, results) => {
       row = error ? error.stack : results.rows; // 카풀 목록 Object
       res.status(200).json({
-        status: 'success',
         message: '목록 불러오기 성공',
         data: row,
       });
@@ -125,7 +123,6 @@ async function main() {
       });
     }
     res.status(200).json({
-      status: 'success',
       message: '목록 불러오기 성공',
       data: search_data,
     }); // 결과 전송 to client
@@ -177,7 +174,6 @@ async function main() {
     await db_client.end();
     console.log('새로운 카풀등록');
     res.status(200).json({
-      status: 'success',
       message: '등록되었습니다.',
     });
   });
@@ -228,7 +224,6 @@ async function main() {
     // }
     await db_client.end();
     res.status(200).json({
-      status: 'success',
       message: '등록되었습니다.',
     });
   });
