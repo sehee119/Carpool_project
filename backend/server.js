@@ -283,8 +283,7 @@ async function main() {
       message: '등록되었습니다.'
     });
   });
-<<<<<<< HEAD
-	app.post('/delete/carpool/', (req, res) => {
+	app.post('/delete/carpool/:carpool_id', (req, res) => {
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
 
@@ -302,8 +301,8 @@ async function main() {
     res.status(200).json({ status: 'success', message: '삭제되었습니다.' });
   })
 
-=======
->>>>>>> 9953e7ffcb62ccdec10d405700f9df078d5bae06
+
+
 
 
   app.get('/map', (req, res) => {
