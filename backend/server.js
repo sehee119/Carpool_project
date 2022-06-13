@@ -283,7 +283,7 @@ async function main() {
       message: '등록되었습니다.'
     });
   });
-	app.post('/delete/carpool/:carpool_id', (req, res) => {
+	app.post('/delete/carpool', async (req, res) => {
     const db_client = new Client(db_config);
     res.header('Access-Control-Allow-Origin', '*'); // CORS
 
