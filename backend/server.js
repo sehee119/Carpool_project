@@ -53,14 +53,13 @@ SELECT
 FROM app_user 
 	join carpool on app_user.id = carpool.driver_id
 	join driver using(driver_id)
-WHERE
-	carpool.id = $1
+WHERE app_user.id = $1
 ;`;
 const QUERY_CARPOOL_FILTER = `
 SELECT
   carpool.id as carpool_id, name, gender, max_passenger, start_date::text, end_date::text, 
-  dotw, starting_point, starting_coord, destination_point, destination_coord
-  
+  dotw, starting_point, starting_coord, destination_point, destination_coord, desired_arrival_time
+
 FROM app_user 
   join carpool on app_user.id = carpool.driver_id
   join driver using(driver_id)
@@ -183,7 +182,7 @@ async function main() {
       ); //
       search_data.push({
         ...row,
-        ride_time: 0,
+        ride_time: row.desried_arrival_time - duration, // 여러명일경우, 경유지마다 시간 필요함
         time_difference: duration - old_duration,
         distance_difference: 0,
       });
