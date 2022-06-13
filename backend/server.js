@@ -32,8 +32,9 @@ SELECT
 	carpool.id as carpool_id, name, gender, max_passenger, start_date, end_date, dotw, starting_point, destination_point, desired_arrival_time
 FROM app_user 
 	join carpool on app_user.id = carpool.driver_id
-	join driver using(driver_id);
-`;
+	join driver using(driver_id)
+ORDERY BY created
+;`;
 const QUERY_CARPOOL_LIST_BY_ID = `
 SELECT
 	carpool.id as carpool_id, name, gender, max_passenger, start_date, end_date, dotw, starting_point, destination_point, desired_arrival_time
@@ -70,6 +71,10 @@ INSERT INTO candidate VALUES (
   $1, $2, $3,
   $4, $5,
   $6, $7, false);
+`;
+const DELETE_CARPOOL = `
+DELETE FROM carpool
+WHERE id = $1;
 `;
 // 카풀 목록 불러오기
 async function main() {
@@ -244,7 +249,26 @@ async function main() {
     await db_client.end();
     res.status(200).json({ status: 'success', message: '등록되었습니다.' });
   });
-	
+	app.post('/delete/carpool/', (req, res) => {
+    const db_client = new Client(db_config);
+    res.header('Access-Control-Allow-Origin', '*'); // CORS
+
+    let carpool_id = req.body.carpool_id;
+
+    await db_client.connect();
+    try {
+      await db_client.query(DELETE_CARPOOL, [carpool_id]);
+    } catch(error) {
+      console.log(error.message);
+      res.status(400).json({ message : error.message });
+      return;
+    }
+    await db_client.end();
+    res.status(200).json({ status: 'success', message: '삭제되었습니다.' });
+  })
+
+
+
   app.get('/map', (req, res) => {
     res.sendFile(__dirname + '/map.html');
   })
