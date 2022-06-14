@@ -3,6 +3,9 @@ const { Client } = require('pg');
 const router = require('express').Router();
 const db_config = require('./../../config');
 
+const { getGeo } = require('../NCP/getGeo.js');
+const { transGeo } = require('../NCP/transGeo.js');
+
 router.post('/', async (req, res) => {
   const db_client = new Client(db_config);
 
