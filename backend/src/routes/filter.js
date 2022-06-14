@@ -3,8 +3,8 @@ const { Client } = require('pg');
 const router = require('express').Router();
 const db_config = require('./../../config');
 
-const { getGeo } = require('./src/NCP/getGeo.js');
-const { transGeo } = require('./src/NCP/transGeo.js');
+const { getGeo } = require('../NCP/getGeo.js');
+const { transGeo } = require('../NCP/transGeo.js');
 const { getDuration } = require('../NCP/getDuration');
 
 router.get('/', async (req, res) => {
