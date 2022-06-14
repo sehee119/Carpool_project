@@ -21,6 +21,8 @@ const map = require('./src/routes/map');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.set('views', './views');
+app.set('view engine', 'ejs');
 
 // Routers
 app.use('/list', list);
