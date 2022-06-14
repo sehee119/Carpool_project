@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Client } = require('pg');
 const router = require('express').Router();
 const db_config = require('./../../config');
+require('dotenv').config({ path: './.env' });
 
 const { getGeo } = require('../NCP/getGeo.js');
 const { transGeo } = require('../NCP/transGeo.js');
