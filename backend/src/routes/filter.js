@@ -2,7 +2,6 @@ const fs = require('fs');
 const { Client } = require('pg');
 const router = require('express').Router();
 const db_config = require('./../../config');
-require('dotenv').config({ path: '../../env' });
 
 const { getGeo } = require('../NCP/getGeo.js');
 const { transGeo } = require('../NCP/transGeo.js');
@@ -17,8 +16,8 @@ router.get('/', async (req, res) => {
     const desired_time = req.query.desired_time;
     const ride_start_name = req.query.start_name;
     const ride_goal_name = req.query.goal_name;
-    const gender = req.query.gender;
-    const dotw = req.query.dotw;
+    let gender = req.query.gender;
+    let dotw = req.query.dotw;
     let db_result = {}; // DB 쿼리 결과값 저장
 
     if (Array.isArray(gender) == false) gender = [gender]; // 성별을 한개 택했을 때도 Array로 변경

@@ -1,3 +1,4 @@
+require('dotenv').config({ path: './.env' });
 const fs = require('fs');
 const { Client } = require('pg');
 const express = require('express');
