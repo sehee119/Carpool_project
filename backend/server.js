@@ -27,7 +27,7 @@ app.use('/list', list);
 app.use('/filter', filter);
 app.use('/register', register);
 app.use('/candidate', candidate);
-app.use('/deleteCarpool', deleteCarpool);
+app.use('/delete/carpool', deleteCarpool);
 app.use('/passenger', passenger);
 app.use('/driver', driver);
 app.use('/map', map);
