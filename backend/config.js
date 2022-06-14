@@ -17,5 +17,5 @@ const config = {
     }
 };
 
-module.exports = config.local;
-// module.exports = config.default;
+// module.exports = config.local;
+module.exports = config.default;

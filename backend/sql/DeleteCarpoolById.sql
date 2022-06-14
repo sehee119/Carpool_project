@@ -1,5 +1,3 @@
-INSERT INTO candidate VALUES (
-  $1, $2, $3,
-  $4, $5,
-  $6, $7, false)
+DELETE FROM carpool
+WHERE id = $1
 ;

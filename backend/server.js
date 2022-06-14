@@ -11,6 +11,7 @@ const filter = require('./src/routes/filter');
 const register = require('./src/routes/register');
 const candidate = require('./src/routes/candidate');
 const deleteCarpool = require('./src/routes/deleteCarpool');
+const passenger = require('./src/routes/passenger');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,6 +23,7 @@ app.use('/filter', filter);
 app.use('/register', register);
 app.use('/candidate', candidate);
 app.use('/deleteCarpool', deleteCarpool);
+app.use('/passenger', passenger);
 
 function main() {
   app.get('/list/:id', (req, res) => {

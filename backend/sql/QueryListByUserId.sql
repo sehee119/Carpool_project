@@ -1,5 +1,5 @@
 SELECT
-	carpool.id as carpool_id, name, gender, max_passenger, 
+	carpool.id as carpool_id, name as driver_name, gender, max_passenger, 
 	candidate.start_date, candidate.end_date, candidate.dotw, 
 	starting_point, destination_point, desired_arrival_time,
 	ride_spot, is_accepted
