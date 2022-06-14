@@ -7,10 +7,32 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Naver 지도 표시하기</title>
     <script type="text/javascript"
-        src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=py7vaucpvn"></script>
+        src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=py7vaucpvn">
+        var app = new Vue({
+          el: '#app',
+          data: {
+            link: 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=py7vaucpvn' //this is the link
+  }
+})
+
+      </script>
+
 </head>
 
 <body>
+  <div id="app">
+      <p v-html="link"></p>
+  </div>
+  <script type="text/javascript"
+      src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=py7vaucpvn">
+      var app = new Vue({
+        el: '#app',
+        data: {
+          link: 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=py7vaucpvn' //this is the link
+}
+})
+
+    </script>
     <!-- <span id="xy" style="display:none;"><%= xy %></span> -->
     <span id="cnt" style="display:none;"><%= xy[0] %></span>
     <span id="start_xy" style="display:none;"><%= xy[1] %></span>
