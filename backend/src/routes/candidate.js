@@ -6,7 +6,7 @@ const db_config = require('./../../config');
 router.post('/', async (req, res) => {
   const db_client = new Client(db_config);
 
-  const DATA_SQL = fs.readFileSync('./sql/InsertCandidaate.sql').toString();
+  const DATA_SQL = fs.readFileSync('./sql/InsertCandidate.sql').toString();
   const carpool_id = req.body.carpool_id;
   const user_id = req.body.user_id;
   const ride_spot = req.body.start_name;
