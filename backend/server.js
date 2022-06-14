@@ -13,6 +13,7 @@ const register = require('./src/routes/register');
 const candidate = require('./src/routes/candidate');
 const deleteCarpool = require('./src/routes/deleteCarpool');
 const passenger = require('./src/routes/passenger');
+const driver = require('./src/routes/driver');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,6 +26,7 @@ app.use('/register', register);
 app.use('/candidate', candidate);
 app.use('/deleteCarpool', deleteCarpool);
 app.use('/passenger', passenger);
+app.use('/driver', driver);
 
 function main() {
   app.get('/list/:id', (req, res) => {
