@@ -86,8 +86,10 @@ router.get('/', async (req, res) => {
         ...row,
         ride_time: timeConversionMinus(row.desired_arrival_time, durations[1]), // 여러명일경우, 경유지마다 시간 필요함
         time_difference: msec2string(duration - old_duration),
+        time_diff_ms: duration - old_duration, // for sorting
         distance_difference: 0,
       });
+      search_data = search_data.sort((a, b) => parseInt(a.time_diff_ms) - parseInt(b.time_diff_ms));
     }
     res.status(200).json({
       message: '목록 불러오기 성공',
