@@ -3,11 +3,11 @@ const { Client } = require('pg');
 const router = require('express').Router();
 const db_config = require('./../../config');
 
-router.get('/:id', async (req, res) => {
+router.get('/:user_id', async (req, res) => {
   const db_client = new Client(db_config);
 
-  const DATA_SQL = fs.readFileSync('./sql/QueryListByUserId.sql').toString();
-  const user_id = req.params.id;
+  const DATA_SQL = fs.readFileSync('./sql/QueryCandidateByUserId.sql').toString();
+  const user_id = req.params.user_id;
   let db_result = {};
 
   await db_client.connect();
